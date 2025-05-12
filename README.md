@@ -1,6 +1,6 @@
 # Manage-FTP-aigio
 
-Aigio weather station uploads a ```.dat``` file every 5 minutes to the FTP server.
+Aigio weather station uploads a ```.dat``` file every 10 minutes to the FTP server.
 
 Each ```.dat``` file contains 1 10-min measurements.
 
