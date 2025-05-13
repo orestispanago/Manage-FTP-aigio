@@ -16,10 +16,10 @@ Both the remote and the loca raw ```.dat``` files are deleted after the ```.csv`
 
 Edit the FTP parameters in ```ftp.py```. 
 
-To avoid overlapping cron job execution, use ```flock``` in crontab:
+To run every hour, add the following line in crontab:
 
 ```
-*/10 * * * * /usr/bin/flock -w 0 ~/manage_ftp_aigio.lock python3 ~/Manage-FTP-aigio/main.py
+0 * * * * python3 ~/Manage-FTP-aigio/main.py
 ```
 
 To check if your cron job is running:

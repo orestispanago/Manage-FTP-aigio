@@ -73,7 +73,7 @@ def save_to_daily_files(df, folder="daily", prefix=""):
 def main():
     remote_dat_files = list_remote_dir(pattern="*.dat")
     download(remote_dat_files, local_folder="raw")
-    local_dat_files = glob.glob("raw/*.dat")
+    local_dat_files = glob.glob("raw/*10min*.dat")
     raw_data = read_dat_files(local_dat_files)
     save_to_daily_files(raw_data, folder="daily", prefix="aigio10min_")
     daily_files = sorted(glob.glob("daily/*.csv"))
