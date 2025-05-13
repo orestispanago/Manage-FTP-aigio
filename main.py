@@ -71,6 +71,8 @@ def save_to_daily_files(df, folder="daily", prefix=""):
 
 
 def main():
+    logger.info(f"{'-' * 15} START {'-' * 15}")
+
     remote_dat_files = list_remote_dir(pattern="*.dat")
     download(remote_dat_files, local_folder="raw")
     local_dat_files = glob.glob("raw/*10min*.dat")
@@ -82,6 +84,7 @@ def main():
     delete_remote_files(remote_dat_files)
     delete_local_folder("raw")
 
+    logger.info(f"{'-' * 15} SUCCESS {'-' * 15}")
 
 if __name__ == "__main__":
     try:
