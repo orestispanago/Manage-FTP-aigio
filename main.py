@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 def read_dat_files(dat_files):
-    logger.debug("Reading .dat files...")
+    logger.debug(f"Reading {len(dat_files)} .dat files...")
     df_list = []
     for dat_file in dat_files:
         df = pd.read_csv(
@@ -76,15 +76,23 @@ def main():
     remote_dat_files = list_remote_dir(pattern="*.dat")
     download(remote_dat_files, local_folder="raw")
     local_dat_files = glob.glob("raw/*10min*.dat")
-    raw_data = read_dat_files(local_dat_files)
-    save_to_daily_files(raw_data, folder="daily", prefix="aigio10min_")
-    daily_files = sorted(glob.glob("daily/*.csv"))
-    upload_files(daily_files)
-    archive_past_days(daily_files)
+    non_empty_dat_files = [f for f in local_dat_files if os.path.getsize(f) > 0]
+    empty_dat_files = [f for f in local_dat_files if os.path.getsize(f) == 0]
+
+    logger.debug(f"Found {len(empty_dat_files)} empty .dat files locally.")
+    if len(non_empty_dat_files) > 0:
+        raw_data = read_dat_files(non_empty_dat_files)
+        save_to_daily_files(raw_data, folder="daily", prefix="aigio10min_")
+        daily_files = sorted(glob.glob("daily/*.csv"))
+        upload_files(daily_files)
+        archive_past_days(daily_files)
+    else:
+        logger.warning("0 non-empty files found locally.")
     delete_remote_files(remote_dat_files)
     delete_local_folder("raw")
 
     logger.info(f"{'-' * 15} SUCCESS {'-' * 15}")
+
 
 if __name__ == "__main__":
     try:
