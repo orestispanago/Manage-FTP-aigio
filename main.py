@@ -22,7 +22,9 @@ def read_dat_files(dat_files):
     logger.debug(f"Reading {len(dat_files)} .dat files...")
     df_list = []
     for dat_file in dat_files:
-        df = pd.read_csv(
+        logger.debug(dat_file)
+        try:
+            df = pd.read_csv(
             dat_file,
             names=[
                 "Datetime_UTC",
@@ -53,7 +55,9 @@ def read_dat_files(dat_files):
             index_col="Datetime_UTC",
             parse_dates=True,
         )
-        df_list.append(df)
+            df_list.append(df)
+        except UnicodeDecodeError as e:
+            logger.warning(f"Could not read {dat_file}. Skipping...")
     df_all = pd.concat(df_list)
     df_all = df_all.sort_index()
     logger.debug(f"Merged {len(dat_files)} files")
