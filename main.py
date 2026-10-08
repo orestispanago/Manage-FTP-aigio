@@ -7,7 +7,14 @@ import traceback
 import pandas as pd
 
 from ftp import delete_remote_files, download, list_remote_dir, upload_files
-from utils import archive_past_days, delete_local_folder, mkdir_if_not_exists, save_to_daily_files
+from utils import (
+    archive_past_days,
+    concat_sorted,
+    delete_local_folder,
+    mkdir_if_not_exists,
+    parse_datetime_index,
+    save_to_daily_files,
+)
 
 dname = os.path.dirname(__file__)
 os.chdir(dname)
@@ -53,13 +60,13 @@ def read_dat_files(dat_files):
                 "CSI_batt",
             ],
             index_col="Datetime_UTC",
-            parse_dates=True,
         )
-            df_list.append(df)
-        except UnicodeDecodeError as e:
+            df = parse_datetime_index(df, dat_file)
+            if len(df) > 0:
+                df_list.append(df)
+        except (UnicodeDecodeError, pd.errors.ParserError):
             logger.warning(f"Could not read {dat_file}. Skipping...")
-    df_all = pd.concat(df_list)
-    df_all = df_all.sort_index()
+    df_all = concat_sorted(df_list)
     logger.debug(f"Merged {len(dat_files)} files")
     return df_all
 
